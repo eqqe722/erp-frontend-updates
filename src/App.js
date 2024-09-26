@@ -12,6 +12,7 @@ import AdminHeaderFooterEditor from './components/AdminHeaderFooterEditor';
 import DocumentManagementModule from './components/DocumentManagementModule';
 import DocumentSearch from './components/DocumentSearch';
 import { Finance, Inventory, Projects, Assets, Vendors } from './components/ModuleComponents';
+import IncomingDocumentManagement from './components/IncomingDocumentManagement';
 
 // Custom theme
 import theme from './theme';
@@ -170,6 +171,7 @@ const Layout = ({ children }) => {
             <Link as={RouterLink} to="/vendors" _hover={{ color: "blue.200" }}>{t('vendors')}</Link>
             <Link as={RouterLink} to="/documents" _hover={{ color: "blue.200" }}>{t('documents')}</Link>
             <Link as={RouterLink} to="/trial-management" _hover={{ color: "blue.200" }}>{t('trialManagement')}</Link>
+            <Link as={RouterLink} to="/incoming-documents" _hover={{ color: "blue.200" }}>{t('incomingDocuments')}</Link>
           </Flex>
           <Button
             onClick={() => i18n.changeLanguage(i18n.language === 'en' ? 'ar' : 'en')}
@@ -227,6 +229,7 @@ function App() {
               <Route path="/documents/search" element={<DocumentSearch />} />
               <Route path="/trial-management" element={<TrialManagement />} />
               <Route path="/admin/header-footer" element={<AdminHeaderFooterEditor />} />
+              <Route path="/incoming-documents" element={<IncomingDocumentManagement />} />
             </Routes>
           </Layout>
         </Router>

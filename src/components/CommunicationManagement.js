@@ -1,27 +1,50 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Button, Input, Select, useToast } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { useLanguage } from '../contexts/LanguageContext';
 
 const CommunicationManagement = () => {
   const { t } = useTranslation();
-  const { language } = useLanguage();
   const [communications, setCommunications] = useState([]);
   const [newCommunication, setNewCommunication] = useState({
     stakeholder: '',
-    channel: '',
+    communication_channel: '',
     frequency: '',
-    responsible: '',
-    message: ''
+    responsible_party: '',
+    message_purpose: ''
   });
   const toast = useToast();
+
+  useEffect(() => {
+    fetchCommunications();
+  }, []);
+
+  const fetchCommunications = async () => {
+    try {
+      const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+      const response = await axios.get('http://127.0.0.1:8000/communication-plans', {
+        headers: {
+          'Authorization': `Bearer ${token}` // Include the token in the request headers
+        }
+      });
+      setCommunications(response.data);
+    } catch (error) {
+      console.error('Error fetching communications:', error);
+      toast({
+        title: t('Error fetching communications'),
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewCommunication({ ...newCommunication, [name]: value });
   };
 
-  const addCommunication = () => {
+  const addCommunication = async () => {
     if (Object.values(newCommunication).some(value => value === '')) {
       toast({
         title: t('All fields are required'),
@@ -31,14 +54,30 @@ const CommunicationManagement = () => {
       });
       return;
     }
-    setCommunications([...communications, { ...newCommunication, id: Date.now() }]);
-    setNewCommunication({ stakeholder: '', channel: '', frequency: '', responsible: '', message: '' });
-    toast({
-      title: t('Communication plan added'),
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    });
+    try {
+      const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+      const response = await axios.post('http://127.0.0.1:8000/communication-plans', newCommunication, {
+        headers: {
+          'Authorization': `Bearer ${token}` // Include the token in the request headers
+        }
+      });
+      setCommunications([...communications, response.data]);
+      setNewCommunication({ stakeholder: '', communication_channel: '', frequency: '', responsible_party: '', message_purpose: '' });
+      toast({
+        title: t('Communication plan added'),
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error('Error adding communication:', error);
+      toast({
+        title: t('Error adding communication plan'),
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -56,8 +95,8 @@ const CommunicationManagement = () => {
         />
         <Select
           placeholder={t('Communication Channel')}
-          name="channel"
-          value={newCommunication.channel}
+          name="communication_channel"
+          value={newCommunication.communication_channel}
           onChange={handleInputChange}
           mb={2}
         >
@@ -80,15 +119,15 @@ const CommunicationManagement = () => {
         </Select>
         <Input
           placeholder={t('Responsible Party')}
-          name="responsible"
-          value={newCommunication.responsible}
+          name="responsible_party"
+          value={newCommunication.responsible_party}
           onChange={handleInputChange}
           mb={2}
         />
         <Input
           placeholder={t('Message/Purpose')}
-          name="message"
-          value={newCommunication.message}
+          name="message_purpose"
+          value={newCommunication.message_purpose}
           onChange={handleInputChange}
           mb={2}
         />
@@ -110,10 +149,10 @@ const CommunicationManagement = () => {
           {communications.map((comm) => (
             <Tr key={comm.id}>
               <Td>{comm.stakeholder}</Td>
-              <Td>{t(comm.channel)}</Td>
+              <Td>{t(comm.communication_channel)}</Td>
               <Td>{t(comm.frequency)}</Td>
-              <Td>{comm.responsible}</Td>
-              <Td>{comm.message}</Td>
+              <Td>{comm.responsible_party}</Td>
+              <Td>{comm.message_purpose}</Td>
             </Tr>
           ))}
         </Tbody>

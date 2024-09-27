@@ -4,6 +4,7 @@ import axios from 'axios';
 import { ChakraProvider, Box, Flex, Heading, Link, VStack, Button, Input, Text, List, ListItem, Image } from '@chakra-ui/react';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
+import ProjectTracking from './components/ProjectTracking';
 import TrialManagement from './components/TrialManagement';
 import { useTranslation } from 'react-i18next';
 import LanguageToggle from './components/LanguageToggle';
@@ -16,6 +17,7 @@ import IncomingDocumentManagement from './components/IncomingDocumentManagement'
 import StatisticsDashboard from './components/StatisticsDashboard';
 import ProjectManagementModule from './components/ProjectManagementModule';
 import { LanguageProvider } from './contexts/LanguageContext';
+import CommunicationManagement from './components/CommunicationManagement';
 
 // Custom theme
 import theme from './theme';
@@ -67,7 +69,18 @@ const EmployeeManagement = () => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/employees/`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/employees/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        params: {
+          skip: 0,
+          limit: 100
+        }
+      });
       setEmployees(response.data);
       setLoading(false);
     } catch (error) {
@@ -85,7 +98,13 @@ const EmployeeManagement = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://127.0.0.1:8000/employees/', newEmployee);
+      const token = localStorage.getItem('token');
+      await axios.post(`${process.env.REACT_APP_API_URL}/employees/`, newEmployee, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
       setNewEmployee({ name: '', email: '', department: '' });
       fetchEmployees();
     } catch (error) {
@@ -235,6 +254,8 @@ function App() {
                 <Route path="/admin/header-footer" element={<AdminHeaderFooterEditor />} />
                 <Route path="/incoming-documents" element={<IncomingDocumentManagement />} />
                 <Route path="/statistics" element={<StatisticsDashboard />} />
+                <Route path="/communication-management" element={<CommunicationManagement />} />
+                <Route path="/project-tracking" element={<ProjectTracking />} />
               </Routes>
             </Layout>
           </Router>

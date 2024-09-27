@@ -11,8 +11,11 @@ import i18n from './i18n';
 import AdminHeaderFooterEditor from './components/AdminHeaderFooterEditor';
 import DocumentManagementModule from './components/DocumentManagementModule';
 import DocumentSearch from './components/DocumentSearch';
-import { Finance, Inventory, Projects, Assets, Vendors } from './components/ModuleComponents';
+import { Finance, Inventory, Assets, Vendors } from './components/ModuleComponents';
 import IncomingDocumentManagement from './components/IncomingDocumentManagement';
+import StatisticsDashboard from './components/StatisticsDashboard';
+import ProjectManagementModule from './components/ProjectManagementModule';
+import { LanguageProvider } from './contexts/LanguageContext';
 
 // Custom theme
 import theme from './theme';
@@ -213,27 +216,30 @@ function App() {
 
   return (
     <ChakraProvider theme={theme}>
-      <AuthProvider>
-        <Router>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/employees" element={<EmployeeManagement />} />
-              <Route path="/finance" element={<Finance />} />
-              <Route path="/inventory" element={<Inventory />} />
-              <Route path="/projects" element={<Projects />} />
-              <Route path="/assets" element={<Assets />} />
-              <Route path="/vendors" element={<Vendors />} />
-              <Route path="/documents" element={<DocumentManagementModule />} />
-              <Route path="/documents/search" element={<DocumentSearch />} />
-              <Route path="/trial-management" element={<TrialManagement />} />
-              <Route path="/admin/header-footer" element={<AdminHeaderFooterEditor />} />
-              <Route path="/incoming-documents" element={<IncomingDocumentManagement />} />
-            </Routes>
-          </Layout>
-        </Router>
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <Router>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/employees" element={<EmployeeManagement />} />
+                <Route path="/finance" element={<Finance />} />
+                <Route path="/inventory" element={<Inventory />} />
+                <Route path="/projects" element={<ProjectManagementModule />} />
+                <Route path="/assets" element={<Assets />} />
+                <Route path="/vendors" element={<Vendors />} />
+                <Route path="/documents" element={<DocumentManagementModule />} />
+                <Route path="/documents/search" element={<DocumentSearch />} />
+                <Route path="/trial-management" element={<TrialManagement />} />
+                <Route path="/admin/header-footer" element={<AdminHeaderFooterEditor />} />
+                <Route path="/incoming-documents" element={<IncomingDocumentManagement />} />
+                <Route path="/statistics" element={<StatisticsDashboard />} />
+              </Routes>
+            </Layout>
+          </Router>
+        </AuthProvider>
+      </LanguageProvider>
     </ChakraProvider>
   );
 }
